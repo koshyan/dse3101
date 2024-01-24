@@ -2,36 +2,52 @@ week2lecture
 ================
 2024-01-24
 
-- [R Markdown](#r-markdown)
-- [Including Plots](#including-plots)
+- [read in data](#read-in-data)
+- [statistics](#statistics)
+- [plot of s&p prices](#plot-of-sp-prices)
+- [plot of s&p yearly returns](#plot-of-sp-yearly-returns)
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax
-for authoring HTML, PDF, and MS Word documents. For more details on
-using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that
-includes both content as well as the output of any embedded R code
-chunks within the document. You can embed an R code chunk like this:
+## read in data
 
 ``` r
-summary(cars)
+df <- readRDS("data/wk2_stocks.rds")
+str(df)
 ```
 
-    ##      speed           dist       
-    ##  Min.   : 4.0   Min.   :  2.00  
-    ##  1st Qu.:12.0   1st Qu.: 26.00  
-    ##  Median :15.0   Median : 36.00  
-    ##  Mean   :15.4   Mean   : 42.98  
-    ##  3rd Qu.:19.0   3rd Qu.: 56.00  
-    ##  Max.   :25.0   Max.   :120.00
+    ## 'data.frame':    5798 obs. of  4 variables:
+    ##  $ SPY_prices : num  88.1 87.1 84.3 84.9 84.7 ...
+    ##  $ SPY_returns: num  0.04804 -0.01076 -0.03264 0.00774 -0.00264 ...
+    ##  $ SPY_vol    : num  88.1 87.1 84.3 84.9 84.7 ...
+    ##  $ date       : Date, format: "2001-01-03" "2001-01-04" ...
 
-## Including Plots
+## statistics
 
-You can also embed plots, for example:
+- the cumulative returns of the S&P index during this period is 218.33%
+- the average daily returns of the S&P index during this period is 0.04%
+- the standard deviation of the daily returns of the S&P index during
+  this period is 1.22%
 
-![](week2lecture_files/figure-gfm/pressure-1.png)<!-- -->
+## plot of s&p prices
 
-Note that the `echo = FALSE` parameter was added to the code chunk to
-prevent printing of the R code that generated the plot.
+``` r
+library(tidyverse)
+ggplot(data = df, aes(x = date, y = SPY_prices)) +
+  geom_line()
+```
+
+![](week2lecture_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+
+## plot of s&p yearly returns
+
+``` r
+df %>%
+  mutate(year = year(date)) %>%
+  filter(year <= 2023) %>%
+  group_by(year) %>%
+  summarise(yr_return = sum(SPY_returns)) %>%
+  
+  ggplot(aes(x = year, y = yr_return)) +
+  geom_col()
+```
+
+![](week2lecture_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
